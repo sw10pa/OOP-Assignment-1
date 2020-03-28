@@ -1,34 +1,66 @@
-// HW1 2-d array Problems
-// CharGrid encapsulates a 2-d grid of chars and supports
-// a few operations on the grid.
-
 public class CharGrid {
+
 	private char[][] grid;
 
-	/**
-	 * Constructs a new CharGrid with the given grid.
-	 * Does not make a copy.
-	 * @param grid
-	 */
 	public CharGrid(char[][] grid) {
 		this.grid = grid;
 	}
-	
-	/**
-	 * Returns the area for the given char in the grid. (see handout).
-	 * @param ch char to look for
-	 * @return area for given char
-	 */
+
 	public int charArea(char ch) {
-		return 0; // YOUR CODE HERE
+		int minRow = grid.length;
+		int minCol = grid.length > 0 ? grid[0].length : 0;
+		int maxRow = -1;
+		int maxCol = -1;
+
+		for (int row = 0; row < grid.length; row++) {
+			for (int col = 0; col < grid[row].length; col++) {
+				if (grid[row][col] == ch) {
+					minRow = Math.min(minRow, row);
+					minCol = Math.min(minCol, col);
+					maxRow = Math.max(maxRow, row);
+					maxCol = Math.max(maxCol, col);
+				}
+			}
+		}
+
+		if (maxRow == -1) return 0;
+		return (maxRow - minRow + 1) * (maxCol - minCol + 1);
 	}
-	
-	/**
-	 * Returns the count of '+' figures in the grid (see handout).
-	 * @return number of + in grid
-	 */
+
 	public int countPlus() {
-		return 0; // YOUR CODE HERE
+		int pluses = 0;
+		for (int i = 1; i < grid.length - 1; i++) {
+			for (int j = 1; j < grid[i].length - 1; j++) {
+				if (isPlus(i, j)) pluses++;
+			}
+		}
+		return pluses;
+	}
+
+	private boolean isPlus(int i, int j) {
+		int leftArm = measureArm(i, j, 0, -1);
+		int upperArm = measureArm(i, j, -1, 0);
+		int rightArm = measureArm(i, j, 0, 1);
+		int lowerArm = measureArm(i, j, 1, 0);
+		return leftArm > 1 &&
+			   leftArm == upperArm && upperArm == rightArm && rightArm == lowerArm;
+	}
+
+	private int measureArm(int i, int j, int di, int dj) {
+		int length = 0;
+		char ch = grid[i][j];
+		while (inBounds(i, j)) {
+			if (grid[i][j] != ch) break;
+			length++;
+			i += di;
+			j += dj;
+		}
+		return length;
+	}
+
+	private boolean inBounds(int i, int j) {
+		return i >= 0 && i < grid.length &&
+			   j >= 0 && j < grid[i].length;
 	}
 	
 }
